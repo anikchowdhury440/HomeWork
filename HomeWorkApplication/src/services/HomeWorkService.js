@@ -11,31 +11,33 @@ class HomeWorkService {
             let options = {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(body)
             }
-            let responce = fetch('http://192.168.1.29:8000/manageimages', options)
+            let responce = fetch('http://192.168.1.29:8000/homeworks', options)
             responce.then(res => {
-                console.log(res)
                 res.json().then(resp => {
-                    console.log(resp)
                     resolve(resp)
-                }).catch(error => reject(error))
+                }).catch(error => {
+                    reject(error)
+                })
             })
-            .catch(error => reject(error))
+            .catch(error => {
+                reject(error)
+            })
         })
     }
 
-    addImage = (imageDetails, index) => {
+    uploadImage = (imageDetails, fileName, homeworkId) => {
         return new Promise(async (resolve, reject) => {
             let data = new FormData()
-            data.append('image', {
+            data.append('file_name', {
                 uri : imageDetails.path,
-                name : `images${index}.jpg`,
+                name : `${fileName}.jpg`,
                 type : imageDetails.mime
             })
-            data.append('name', `images${index}.jpg`)
+            data.append('hw_id', homeworkId)
             let options = {
                 method: 'POST',
                 headers: {
@@ -43,13 +45,17 @@ class HomeWorkService {
                 },
                 body: data
             }
-            let responce = fetch('http://192.168.1.29:8000/manageimages', options)
+            let responce = fetch('http://192.168.1.29:8000/homeworks_files', options)
             responce.then(res => {
                 res.json().then(resp => {
                     resolve(resp)
-                }).catch(error => reject(error))
+                }).catch(error => {
+                    reject(error)
+                })
             })
-            .catch(error => reject(error))
+            .catch(error => {
+                reject(error)
+            })
         })
     }
 

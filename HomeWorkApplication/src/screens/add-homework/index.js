@@ -12,15 +12,16 @@ import ImageOption from '../../components/image-option';
 import Images from '../../components/show-images';
 import SnackbarComponent from '../../components/snackbar';
 import Topbar from '../../components/topbar';
+import HomeWorkService from '../../services/HomeWorkService';
 
 class AddHomework extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            grade : 'Pre Primary',
+            grade : grades[0],
             branch : 1,
             subject : 'Maths',
-            chapters : 'WS-1',
+            chapters : chapters[0],
             storeImages : [],
             showSnackbar : false,
             snackbarMessage : ''
@@ -56,7 +57,35 @@ class AddHomework extends React.Component {
     }
 
     handleUploadHomework = () => {
-        console.log('press')
+        HomeWorkService.uploadHomeWorkDetails(this.state.grade, this.state.branch, this.state.subject, this.state.chapters)
+            .then(response => {
+                this.state.storeImages.map(imageDetails => {
+                    HomeWorkService.uploadImage(imageDetails, this.state.chapters, response.id)
+                        .then(() => {
+                            this.setState({
+                                grade : grades[0],
+                                branch : 1,
+                                subject : 'Maths',
+                                chapters : chapters[0],
+                                storeImages : [],
+                                showSnackbar : true,
+                                snackbarMessage : 'HomeWork Added Successfully'
+                            })
+                        })
+                        .catch(error => {
+                            this.setState({
+                                showSnackbar : true,
+                                snackbarMessage : 'Internal Sever Error. Try Again Later'
+                            })
+                        })
+                })
+            })
+            .catch(error => {
+                this.setState({
+                    showSnackbar : true,
+                    snackbarMessage : 'Internal Sever Error. Try Again Later'
+                })
+            })
     }
 
     chooseFromLibrary = () => {
